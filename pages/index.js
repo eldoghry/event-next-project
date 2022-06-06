@@ -3,7 +3,6 @@ import { getFeaturedEvents } from "../dummay-data";
 
 function HomePage() {
   const featuredEvents = getFeaturedEvents();
-
   return <EventList items={featuredEvents} />;
 }
 

@@ -1,8 +1,16 @@
 import EventItem from "./event-item";
 import classes from "./event-list.module.css";
 
+function getReadableDate(date) {
+  return new Date(date).toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
 function EventList(props) {
   const { items } = props;
+
   return (
     <ul className={classes.list}>
       {items.map((event) => (
@@ -12,8 +20,8 @@ function EventList(props) {
           title={event.title}
           description={event.description}
           location={event.location}
-          date={event.date}
-          image={event.image}
+          date={getReadableDate(event.date)}
+          image={"/" + event.image}
         />
       ))}
     </ul>
