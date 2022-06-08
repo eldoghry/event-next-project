@@ -20,20 +20,14 @@ function FilterEventsPage(props) {
 
   // const date = new Date(year, month - 1);
 
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
-  let filterdEvents = "";
+  // let filterdEvents = "";
 
-  useEffect(() => {
-    filterdEvents = props.filterEvents;
-    setLoading(false);
-  });
+  console.log(props);
+  const filterEvents = props.filterEvents;
 
-  if (loading) {
-    return <p>Loading ...</p>;
-  }
-
-  if (filterdEvents.length === 0) {
+  if (props.hasError || !filterEvents || filterEvents.length === 0) {
     return (
       <ErrorAlert>
         <p className="center">No events found</p>
@@ -41,10 +35,12 @@ function FilterEventsPage(props) {
     );
   }
 
+  const date = new Date(props.date.year, props.date.month - 1);
+
   return (
     <div>
-      {/* <ResultsTitle date={props.date} /> */}
-      <EventList items={filterdEvents} />
+      <ResultsTitle date={date} />
+      <EventList items={filterEvents} />
     </div>
   );
 }
@@ -52,10 +48,11 @@ function FilterEventsPage(props) {
 export default FilterEventsPage;
 
 export async function getServerSideProps(context) {
-  const { req } = context;
+  const { params } = context;
+  // console.log(params);
   // const filterData = req.params.slug;
-  const year = +req.url.split("/")[2];
-  const month = +req.url.split("/")[3];
+  const year = +params.slug[0];
+  const month = +params.slug[1];
 
   const response = await fetch(
     "https://meetups-react-4fcfb-default-rtdb.firebaseio.com/events.json"
@@ -73,14 +70,25 @@ export async function getServerSideProps(context) {
 
   const filterEvents = transformedData.filter((e) => {
     const date = new Date(e.date);
-    console.log(date);
     return date.getFullYear() === year && date.getMonth() + 1 === month;
   });
+
+  if (!filterEvents || filterEvents.length === 0) {
+    return {
+      props: {
+        hasError: true,
+      },
+    };
+  }
 
   // console.log(filterEvents);
   return {
     props: {
       filterEvents,
+      date: {
+        month,
+        year,
+      },
     },
   };
 }
