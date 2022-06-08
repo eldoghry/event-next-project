@@ -1,5 +1,5 @@
-import { useRouter } from "next/router";
-import { getEventById } from "./../../dummay-data";
+// import { useRouter } from "next/router";
+import { getEventById, getFeaturedEvents } from "../../helper/api-util";
 import { Fragment } from "react";
 import EventContent from "../../components/event-detail/event-content";
 import EventLogistics from "../../components/event-detail/event-logistics";
@@ -10,9 +10,8 @@ function EventDetailPage(props) {
   // const eventId = router.query.eventId;
   // const event = getEventById(eventId);
 
-  if (!props.event) return <p>No event found</p>;
+  if (!props.event) return <p>Loading...</p>;
 
-  
   return (
     <Fragment>
       <EventSummary title={props.event.title} />
@@ -34,47 +33,34 @@ export default EventDetailPage;
 
 export async function getStaticProps(context) {
   const eventId = context.params.eventId;
+  const event = await getEventById(eventId);
 
-  const response = await fetch(
-    "https://meetups-react-4fcfb-default-rtdb.firebaseio.com/events.json"
-  );
-  const data = await response.json();
-  const transformedData = [];
-
-  for (let key of Object.keys(data)) {
-    transformedData.push({
-      ...data[key],
-      id: key,
-    });
-  }
-  const event = transformedData.filter((e) => e.id === eventId)[0];
+  console.log("regenerating event detail page");
 
   return {
     props: {
       event,
     },
+
+    revalidate: 30, //this page not frequantily updated
   };
 }
 
 export async function getStaticPaths() {
   //ISR incremetal static regenration build paths dynamicly based on data
-  const response = await fetch(
-    "https://meetups-react-4fcfb-default-rtdb.firebaseio.com/events.json"
-  );
-  const data = await response.json();
+  // prerender only featured events (assume that I have million events, so I can't prerender all events)
 
-  const params = [];
+  const featuredEvents = await getFeaturedEvents();
 
-  for (let key of Object.keys(data)) {
-    params.push({
-      params: {
-        eventId: key,
-      },
-    });
-  }
+  const params = featuredEvents.map((event) => ({
+    params: {
+      eventId: event.id,
+    },
+  }));
 
   return {
     paths: params,
-    fallback: false,
+    // fallback: false,
+    fallback: true, // we tell next there are some ids not prerender and we need to render them on the fly
   };
 }
