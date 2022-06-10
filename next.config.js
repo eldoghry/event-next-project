@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
   images: {
-    domains: ["images.unsplash.com"],
-    formats: ["image/webp"],
+    domains: ["images.unsplash.com", "cdn.pixabay.com", "juniorcoders.ca"],
+    formats: ["image/webp", "image/avif"],
   },
 };
 
