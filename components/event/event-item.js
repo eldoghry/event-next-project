@@ -4,10 +4,14 @@ import RightArrowIcon from "../ui/icons/right-arrow";
 import DateIcon from "../ui/icons/date";
 import LocationIcon from "../ui/icons/location";
 
+import Image from "next/image";
+
 function EventItem(props) {
   return (
     <li className={classes.item}>
-      <img src={props.image} alt="" />
+      {/* <img  /> */}
+
+      <Image src={props.image} alt="" width={250} height={140} />
 
       <div className={classes.content}>
         <h2>{props.title}</h2>
