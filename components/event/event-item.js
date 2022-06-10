@@ -11,7 +11,13 @@ function EventItem(props) {
     <li className={classes.item}>
       {/* <img  /> */}
 
-      <Image src={props.image} alt="" width={250} height={140} />
+      <Image
+        src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+        alt=""
+        width={250}
+        height={140}
+      />
+      {/* <Image src={props.image} alt="" width={250} height={140} /> */}
 
       <div className={classes.content}>
         <h2>{props.title}</h2>
